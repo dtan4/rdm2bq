@@ -1,0 +1,9 @@
+*
+!.dockerignore
+!.ruby-version
+!Gemfile
+!Gemfile.lock
+!Dockerfile
+!bigquery.rb
+!cloud_watch_logs.rb
+!rdm2bq.rb
