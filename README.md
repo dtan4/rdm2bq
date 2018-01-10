@@ -1,5 +1,7 @@
 # rdm2bq
 
+[![Docker Repository on Quay](https://quay.io/repository/dtan4/rdm2bq/status "Docker Repository on Quay")](https://quay.io/repository/dtan4/rdm2bq)
+
 Send [Amazon RDS Enhanced Monitoring](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Monitoring.OS.html) process metrics to Google BigQuery
 
 ## Prerequisites
