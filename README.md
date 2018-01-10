@@ -18,6 +18,12 @@ Send [Amazon RDS Enhanced Monitoring](https://docs.aws.amazon.com/AmazonRDS/late
 bundle install --without development test
 ```
 
+### Docker
+
+```bash
+docker pull quay.io/dtan4/rdm2bq
+```
+
 ## Usage
 
 ```bash
@@ -34,6 +40,17 @@ will send the latest process metrics...
 - from: CloudWatch Log Event `db-THISISANEXAMPLEDATABASEID0`
 - to: BigQuery table `foobar-1234:database_metrics.db_process_metrics20180110`
   - `20180110` is the `YYYYmmdd`-formatted current date in local timezone
+
+### Docker
+
+```bash
+docker run --rm --name rdm2bq quay.io/dtan4/rdm2bq:latest \
+  -l db-THISISANEXAMPLEDATABASEID0 \
+  -p foobar-1234 \
+  -c credentials.json \
+  -d database_metrics \
+  -t db_process_metrics
+```
 
 ### Options / Environment variables
 
