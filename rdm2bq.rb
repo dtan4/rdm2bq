@@ -1,12 +1,13 @@
 #!/usr/bin/env ruby
 
+require "logger"
 require "optparse"
 
 require_relative "./bigquery"
 require_relative "./cloud_watch_logs"
 
 class CLI
-  def initialize
+  def initialize(logger = Logger.new(STDOUT))
     @logger = logger
     @opts = {
       credentials: "",
@@ -25,6 +26,8 @@ class CLI
 
     bigquery = BigQuery.new(@opts[:credentials], @opts[:project_id])
     bigquery.post_metrics(@opts[:dataset], @opts[:table_prefix], metrics)
+
+    @logger.info "successfully inserted"
   end
 
   private
