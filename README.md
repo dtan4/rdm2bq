@@ -59,7 +59,7 @@ docker run --rm -e TZ=Asia/Tokyo --name rdm2bq quay.io/dtan4/rdm2bq:latest \
 
 |Option|Environment variable|Description|Example|
 |------|--------------------|-----------|-------|
-||`TZ`|timezone|`Asia/Tokyo`|
+||`TZ`|timezone ([tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) zone name)|`Asia/Tokyo`|
 |`-c`, `--credentials VALUE`|`RDM2BQ_GCP_CREDENTIALS`|GCP credentials file|`/app/credentials.json`|
 |`-d`, `--dataset VALUE`|`RDM2BQ_BIGQUERY_DATASET`|BigQuery dataset|`database_metrics`|
 |`--dry-run`||Dry run (does not insert any metrics to BigQuery)||
