@@ -1,10 +1,8 @@
 #!/usr/bin/env ruby
 
-require "aws-sdk-cloudwatchlogs"
-require "json"
 require "optparse"
 
-LOG_GROUP_NAME = "RDSOSMetrics"
+require_relative "./cloud_watch_logs"
 
 class CLI
   def initialize
@@ -15,7 +13,9 @@ class CLI
 
   def run(argv)
     parse_opts(argv)
-    metrics = retrieve_latest_metrics(@opts[:log_stream_name])
+
+    cloud_watch_logs = CloudWatchLogs.new
+    metrics = cloud_watch_logs.retrieve_latest_metrics(@opts[:log_stream_name])
 
     #
     # processList
@@ -50,19 +50,6 @@ class CLI
     op.on("-l", "--log-stream VALUE", "CloudWatch log stream name") { |v| @opts[:log_stream_name] = v }
 
     op.parse!(argv)
-  end
-
-  def retrieve_latest_metrics(log_stream_name)
-    client = Aws::CloudWatchLogs::Client.new
-
-    event = client.get_log_events(
-      log_group_name: LOG_GROUP_NAME,
-      log_stream_name: log_stream_name,
-      limit: 1,
-      start_from_head: false, # latest log events are returned first
-    ).events[0]
-
-    JSON.parse(event.message)
   end
 end
 
