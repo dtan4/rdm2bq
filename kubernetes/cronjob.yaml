@@ -1,0 +1,51 @@
+apiVersion: batch/v2alpha1
+kind: CronJob
+metadata:
+  name: rdm2bq
+  labels:
+    name: rdm2bq
+    role: job
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: "Forbid"
+  suspend: false
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    metadata:
+      name: rdm2bq
+      labels:
+        basename: rdm2bq
+        role: job
+    spec:
+      template:
+        metadata:
+          name: rdm2bq
+          labels:
+            basename: rdm2bq
+            role: job
+        spec:
+          containers:
+          - name: rdm2bq
+            image: quay.io/dtan4/rdm2bq:latest
+            imagePullPolicy: Always
+            command:
+            - "bundle"
+            - "exec"
+            - "ruby"
+            - "./rdm2bq.rb"
+            env:
+            - name: RDM2BQ_GCP_CREDENTIALS
+              value: "/data/credentials.json"
+            envFrom:
+            - secretRef:
+                name: dotenv
+            volumeMounts:
+            - name: gcp-credentials
+              mountPath: "/data"
+              readOnly: true
+          volumes:
+          - name: gcp-credentials
+            secret:
+              secretName: gcp-credentials
+          restartPolicy: Never
