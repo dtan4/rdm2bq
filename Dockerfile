@@ -1,5 +1,8 @@
 FROM ruby:2.5.0-alpine
 
+RUN apk add --no-cache -U \
+      tzdata
+
 WORKDIR /app
 
 COPY Gemfile /app/
