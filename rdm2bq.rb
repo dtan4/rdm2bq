@@ -10,11 +10,11 @@ class CLI
   def initialize(logger = Logger.new(STDOUT))
     @logger = logger
     @opts = {
-      credentials: "",
-      dataset: "",
-      log_stream_name: "",
-      project_id: "",
-      table_prefix: "",
+      credentials: ENV["RDM2BQ_GCP_CREDENTIALS"],
+      dataset: ENV["RDM2BQ_BIGQUERY_DATASET"],
+      log_stream_name: ENV["RDM2BQ_LOG_STREAM"],
+      project_id: ENV["RDM2BQ_GCP_PROJECT_ID"],
+      table_prefix: ENV["RDM2BQ_BIGQUERY_TABLE_PREFIX"],
     }
   end
 
