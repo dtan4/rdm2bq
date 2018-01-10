@@ -36,7 +36,7 @@ will send the latest process metrics...
 ### Options / Environment variables
 
 |Option|Environment variable|Description|Example|
-|------|-----------|-------|
+|------|--------------------|-----------|-------|
 |`-c`, `--credentials VALUE`|`RDM2BQ_GCP_CREDENTIALS`|GCP credentials file|`/app/credentials.json`|
 |`-d`, `--dataset VALUE`|`RDM2BQ_BIGQUERY_DATASET`|BigQuery dataset|`database_metrics`|
 |`--dry-run`||Dry run (does not insert any metrics to BigQuery)||
