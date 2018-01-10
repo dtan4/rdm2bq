@@ -2,14 +2,25 @@
 
 require "aws-sdk-cloudwatchlogs"
 require "json"
+require "optparse"
 
 LOG_GROUP_NAME = "RDSOSMetrics"
+
+opts = {
+  log_stream_name: "",
+}
+
+op = OptionParser.new
+
+op.on("-l", "--log-stream VALUE", "CloudWatch log stream name") { |v| opts[:log_stream_name] = v }
+
+op.parse!(ARGV)
 
 client = Aws::CloudWatchLogs::Client.new
 
 event = client.get_log_events(
   log_group_name: LOG_GROUP_NAME,
-  log_stream_name: ARGV[0],
+  log_stream_name: opts[:log_stream_name],
   limit: 1,
   start_from_head: false, # latest log events are returned first
 ).events[0]
