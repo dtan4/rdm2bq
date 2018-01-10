@@ -6,47 +6,64 @@ require "optparse"
 
 LOG_GROUP_NAME = "RDSOSMetrics"
 
-opts = {
-  log_stream_name: "",
-}
+class CLI
+  def initialize
+    @opts = {
+      log_stream_name: "",
+    }
+  end
 
-op = OptionParser.new
+  def run(argv)
+    parse_opts(argv)
+    metrics = retrieve_latest_metrics(@opts[:log_stream_name])
 
-op.on("-l", "--log-stream VALUE", "CloudWatch log stream name") { |v| opts[:log_stream_name] = v }
+    #
+    # processList
+    #   cpuUsedPc - The percentage of CPU used by the process.
+    #   id - The identifier of the process.
+    #   memoryUsedPc - The amount of memory used by the process, in kilobytes.
+    #   name - The name of the process.
+    #   parentID - The process identifier for the parent process of the process.
+    #   rss - The amount of RAM allocated to the process, in kilobytes.
+    #   tgid - The thread group identifier, which is a number representing the process ID to which a thread belongs. This identifier is used to group threads from the same process.
+    #   vss - The amount of virtual memory allocated to the process, in kilobytes.
+    #
 
-op.parse!(ARGV)
+    metrics["processList"].each do |process|
+      puts({
+        parent_pid: process["parentID"],
+        pid: process["id"],
+        name: process["name"].strip,
+        rss: process["rss"],
+        tgid: process["tgid"],
+        timestamp: metrics["timestamp"],
+        vss: process["vss"],
+      })
+    end
+  end
 
-client = Aws::CloudWatchLogs::Client.new
+  private
 
-event = client.get_log_events(
-  log_group_name: LOG_GROUP_NAME,
-  log_stream_name: opts[:log_stream_name],
-  limit: 1,
-  start_from_head: false, # latest log events are returned first
-).events[0]
+  def parse_opts(argv)
+    op = OptionParser.new
 
-metrics = JSON.parse(event.message)
+    op.on("-l", "--log-stream VALUE", "CloudWatch log stream name") { |v| @opts[:log_stream_name] = v }
 
-#
-# processList
-#   cpuUsedPc - The percentage of CPU used by the process.
-#   id - The identifier of the process.
-#   memoryUsedPc - The amount of memory used by the process, in kilobytes.
-#   name - The name of the process.
-#   parentID - The process identifier for the parent process of the process.
-#   rss - The amount of RAM allocated to the process, in kilobytes.
-#   tgid - The thread group identifier, which is a number representing the process ID to which a thread belongs. This identifier is used to group threads from the same process.
-#   vss - The amount of virtual memory allocated to the process, in kilobytes.
-#
+    op.parse!(argv)
+  end
 
-metrics["processList"].each do |process|
-  puts({
-    parent_pid: process["parentID"],
-    pid: process["id"],
-    name: process["name"].strip,
-    rss: process["rss"],
-    tgid: process["tgid"],
-    timestamp: metrics["timestamp"],
-    vss: process["vss"],
-  })
+  def retrieve_latest_metrics(log_stream_name)
+    client = Aws::CloudWatchLogs::Client.new
+
+    event = client.get_log_events(
+      log_group_name: LOG_GROUP_NAME,
+      log_stream_name: log_stream_name,
+      limit: 1,
+      start_from_head: false, # latest log events are returned first
+    ).events[0]
+
+    JSON.parse(event.message)
+  end
 end
+
+CLI.new.run(ARGV)
