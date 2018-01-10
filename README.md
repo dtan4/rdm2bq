@@ -43,8 +43,11 @@ will send the latest process metrics...
 
 ### Docker
 
+:warning: Default timezone in Docker container is `UTC`.
+If you want to change the timezone of BigQuery table suffix, environment variable `TZ` must be set.
+
 ```bash
-docker run --rm --name rdm2bq quay.io/dtan4/rdm2bq:latest \
+docker run --rm -e TZ=Asia/Tokyo --name rdm2bq quay.io/dtan4/rdm2bq:latest \
   -l db-THISISANEXAMPLEDATABASEID0 \
   -p foobar-1234 \
   -c credentials.json \
@@ -56,6 +59,7 @@ docker run --rm --name rdm2bq quay.io/dtan4/rdm2bq:latest \
 
 |Option|Environment variable|Description|Example|
 |------|--------------------|-----------|-------|
+||`TZ`|timezone|`Asia/Tokyo`|
 |`-c`, `--credentials VALUE`|`RDM2BQ_GCP_CREDENTIALS`|GCP credentials file|`/app/credentials.json`|
 |`-d`, `--dataset VALUE`|`RDM2BQ_BIGQUERY_DATASET`|BigQuery dataset|`database_metrics`|
 |`--dry-run`||Dry run (does not insert any metrics to BigQuery)||
@@ -67,7 +71,7 @@ docker run --rm --name rdm2bq quay.io/dtan4/rdm2bq:latest \
 
 |field|type|description|example|
 |---|---|---|---|
-|`timestamp`|TIMESTAMP|timestamp of metrics|`2018-01-10T02:57:55Z`|
+|`timestamp`|TIMESTAMP|timestamp of metrics in UTC|`2018-01-10T02:57:55Z`|
 |`pid`|INTEGER|process ID|`65502`|
 |`parent_pid`|INTEGER|parent process ID|`1`|
 |`name`|STRING|name of the process|`postgres: user dbname 10.0.0.000(12345) idle`|
