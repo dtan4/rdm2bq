@@ -55,6 +55,19 @@ docker run --rm -e TZ=Asia/Tokyo --name rdm2bq quay.io/dtan4/rdm2bq:latest \
   -t db_process_metrics
 ```
 
+### Kubernetes
+
+Sample CronJob manifest is [here](kubernetes/cronjob.yaml).
+
+- Invoke every minutes
+- Environment variables are read from the Secret `dotenv`
+- GCP credential file is read from the Secret `gcp-credentials/credentials.json`
+  - `kubectl create secret generic gcp-credentials --from-file=credentials.json [-n NAMESPACE]`
+
+```bash
+kubectl create -f kubernetes/cronjob.yaml [-n NAMESPACE]
+```
+
 ### Options / Environment variables
 
 |Option|Environment variable|Description|Example|
