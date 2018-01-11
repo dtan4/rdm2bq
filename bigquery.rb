@@ -13,6 +13,8 @@ class BigQuery
     create_table(dataset, table) unless table_exists?(dataset, table)
 
     @client.dataset(dataset).table(table).insert(transform_metrics_to_bq_rows(metrics))
+
+    table
   end
 
   private

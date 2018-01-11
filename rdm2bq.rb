@@ -22,17 +22,23 @@ class CLI
   def run(argv)
     parse_opts(argv)
 
+    @logger.info "retrieving metrics from CloudWatch Logs..."
+
     cloud_watch_logs = CloudWatchLogs.new
     metrics = cloud_watch_logs.retrieve_latest_metrics(@opts[:log_stream_name])
+
+    @logger.info "metrics timestamp: #{metrics["timestamp"]}"
 
     if @opts[:dry_run]
       @logger.info "[dry-run] #{metrics.length} records will be inserted to BigQuery"
     else
-      bigquery = BigQuery.new(@opts[:credentials], @opts[:project_id])
-      bigquery.post_metrics(@opts[:dataset], @opts[:table_prefix], metrics)
-    end
+      @logger.info "inserting metrics to BigQuery..."
 
-    @logger.info "successfully inserted"
+      bigquery = BigQuery.new(@opts[:credentials], @opts[:project_id])
+      table = bigquery.post_metrics(@opts[:dataset], @opts[:table_prefix], metrics)
+
+      @logger.info "metrics inserted to #{table} successfully"
+    end
   end
 
   private
